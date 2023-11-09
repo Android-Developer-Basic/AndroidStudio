@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.tooling.core.closure
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id("com.android.application") version "8.1.1" apply false
@@ -10,22 +12,34 @@ tasks.register("printSomething") {
     }
 }
 
+open class GreetingExtension(
+    var greeting: String = "Hello",
+    var name: String = "buddy"
+)
+
+// Apply the plugin
+apply<GreetingPlugin>()
+
+configure<GreetingExtension> {
+    greeting = "Здравствуй"
+    name = "родной"
+}
+
 // Plugin
 class GreetingPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.task("hello") {
+        val greeting = project.extensions.create<GreetingExtension>("GreetingExtension")
+        project.extensions.add("greeting", greeting)
+        project.task("printGreeting") {
             doLast {
-                println("Hello")
+                println(greeting.greeting)
             }
         }
-        project.task("printHelloWorld") {
-            dependsOn("hello")
+        project.task("printName") {
+            dependsOn("printGreeting")
             doLast {
-                println("World")
+                println(greeting.name)
             }
         }
     }
 }
-
-// Apply the plugin
-apply<GreetingPlugin>()
