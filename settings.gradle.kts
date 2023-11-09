@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "StudioApp"
 include(":app")
- 
+include(":mylibrary")
