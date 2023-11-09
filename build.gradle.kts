@@ -9,3 +9,23 @@ tasks.register("printSomething") {
         println("Hello World!")
     }
 }
+
+// Plugin
+class GreetingPlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        project.task("hello") {
+            doLast {
+                println("Hello")
+            }
+        }
+        project.task("printHelloWorld") {
+            dependsOn("hello")
+            doLast {
+                println("World")
+            }
+        }
+    }
+}
+
+// Apply the plugin
+apply<GreetingPlugin>()
