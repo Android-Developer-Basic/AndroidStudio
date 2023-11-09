@@ -2,3 +2,9 @@
 plugins {
     alias(libs.plugins.android.application) apply false
 }
+
+tasks.register("printSomething") {
+    doLast {
+        println("Hello World!")
+    }
+}
