@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0" apply false
     id("ru.otus.greeting")
     id("com.android.library") version "8.1.1" apply false
+    id("com.google.devtools.ksp") version "1.9.0-1.0.12" apply false
 }
 
 tasks.register("printSomething") {

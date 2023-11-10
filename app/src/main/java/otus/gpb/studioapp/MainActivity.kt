@@ -1,23 +1,19 @@
 package otus.gpb.studioapp
 
-import android.animation.ObjectAnimator
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.animation.BounceInterpolator
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import otus.gpb.mylibrary.NetworkService
+import otus.gpb.mylibrary.Repository
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,12 +21,14 @@ class MainActivity : AppCompatActivity() {
         const val TAG = "MainActivity"
     }
 
-    private lateinit var text: TextView
+    private lateinit var repository: Repository
     private val employeeAdapter = EmployeeAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        repository = Repository(applicationContext)
 
         findViewById<RecyclerView>(R.id.recycler).apply {
             adapter = ConcatAdapter(HeaderAdapter(), employeeAdapter)
@@ -50,22 +48,25 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button).setOnClickListener {
             getNetwork()
         }
+
+        observeEmployees()
+    }
+
+    private fun observeEmployees() {
+        repository.employees.onEach { employeeAdapter.submitList(it) }.launchIn(lifecycleScope)
     }
 
     private fun getNetwork() {
         lifecycleScope.launch {
-            val employees = withContext(Dispatchers.IO) { NetworkService.getEmployees() }
+            repository.update()
                 .onFailure { error ->
                     Toast.makeText(this@MainActivity, "Network error: $error", Toast.LENGTH_SHORT).show()
                     Log.w(TAG, "Network error:", error)
                 }
-                .onSuccess { response ->
-                    Toast.makeText(this@MainActivity, "Network success. Total: ${ response.size }", Toast.LENGTH_SHORT).show()
-                    Log.i(TAG,"Network success. Total: ${ response.size }")
+                .onSuccess { count ->
+                    Toast.makeText(this@MainActivity, "Network success. Total: $count", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG,"Network success. Total: $count")
                 }
-                .getOrNull()
-
-            employeeAdapter.submitList(employees.orEmpty())
         }
     }
 }
