@@ -11,13 +11,15 @@ material = "1.14.0"
 constraintlayout = "2.2.2"
 greeting = "Здравствуй"
 name = "родной"
-kotlinxCoroutines = "1.7.3"
-lifecycle = "2.6.2"
-recyclerview = "1.3.2"
-okhttp = "4.11.0"
-retrofit = "2.9.0"
-retrofitSerializationConverter = "0.8.0"
-kotlinxSerialization = "1.6.0"
+kotlinxCoroutines = "1.11.0"
+lifecycle = "2.11.0"
+recyclerview = "1.4.0"
+okhttp = "5.5.0"
+retrofit = "3.0.0"
+retrofitSerializationConverter = "1.0.0"
+kotlinxSerialization = "1.11.0"
+room = "2.8.5"
+ksp = "2.3.12"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,9 +40,13 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofit-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitSerializationConverter" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

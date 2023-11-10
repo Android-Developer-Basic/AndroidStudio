@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 import java.util.concurrent.TimeUnit
 
-object NetworkService {
+internal class NetworkService {
     private val okHttp = OkHttpClient.Builder()
         .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
