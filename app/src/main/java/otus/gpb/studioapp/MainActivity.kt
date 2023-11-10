@@ -6,14 +6,30 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.util.Log
+import android.util.Printer
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.widget.Button
 import android.widget.TextView
-import otus.gpb.mylibrary.Printer
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.divider.MaterialDividerItemDecoration
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import otus.gpb.mylibrary.NetworkService
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var text: TextView
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
+    private val employeeAdapter = EmployeeAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,17 +41,40 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        text = findViewById(R.id.text)
-        text.text = Printer.print()
-        val animation = ObjectAnimator.ofFloat(text, View.SCALE_X, 1.0f, 0.0f).apply {
-            duration = 2000
-            repeatCount = 3
-            repeatMode = ObjectAnimator.REVERSE
-            interpolator = BounceInterpolator()
+        findViewById<RecyclerView>(R.id.recycler).apply {
+            adapter = ConcatAdapter(HeaderAdapter(), employeeAdapter)
+            layoutManager = LinearLayoutManager(
+                this@MainActivity,
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+            addItemDecoration(
+                MaterialDividerItemDecoration(
+                    context,
+                    MaterialDividerItemDecoration.VERTICAL
+                )
+            )
         }
 
         findViewById<Button>(R.id.button).setOnClickListener {
-            animation.start()
+            getNetwork()
+        }
+    }
+
+    private fun getNetwork() {
+        lifecycleScope.launch {
+            val employees = withContext(Dispatchers.IO) { NetworkService.getEmployees() }
+                .onFailure { error ->
+                    Toast.makeText(this@MainActivity, "Network error: $error", Toast.LENGTH_SHORT).show()
+                    Log.w(TAG, "Network error:", error)
+                }
+                .onSuccess { response ->
+                    Toast.makeText(this@MainActivity, "Network success. Total: ${ response.size }", Toast.LENGTH_SHORT).show()
+                    Log.i(TAG,"Network success. Total: ${ response.size }")
+                }
+                .getOrNull()
+
+            employeeAdapter.submitList(employees.orEmpty())
         }
     }
 }
