@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StudioApp</string>
+    <string name="name">Name</string>
+    <string name="salary">Salary</string>
 </resources>
