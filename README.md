@@ -16,3 +16,4 @@
 7. Анимация текста для демонстрации layout inspector
 8. Загрузка данных по сети - демонстрация network inspector
 9. База данных - демонстрация database inspector
+10. Compose - демонстрация Compose Preview
